@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CPU Instruction Cycle Simulator</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <div>
+    <h1>CPU Instruction Cycle Simulator</h1>
+    <div class="sub">Fetch &rarr; Decode &rarr; Execute, one micro-operation at a time &middot; COA CO5 Micro Project &middot; Sanjivani University</div>
+  </div>
+  <div class="team">
+    <b>Prasad Sudhir Thorat</b> &middot; PRN 2125UIDM1002<br>
+    <b>Vaishnavi Subhash Shedke</b> &middot; PRN 2125UIDF1073
+  </div>
+</div></header>
+
+<main>
+  <section class="panel">
+    <h2>Setup</h2>
+    <div class="controls">
+      <label class="field">Sample program
+        <select id="sample"></select>
+      </label>
+      <label class="field">Memory size (words)
+        <select id="memSize"><option>16</option><option selected>32</option><option>64</option><option>128</option></select>
+      </label>
+      <label class="field">Memory access time (clock cycles)
+        <select id="memLat"><option selected>1</option><option>2</option><option>3</option><option>4</option></select>
+      </label>
+      <label class="field">Show numbers as
+        <select id="base"><option value="10">Decimal</option><option value="16">Hex</option><option value="2">Binary</option></select>
+      </label>
+      <label class="field">Run speed
+        <input type="range" id="speed" min="1" max="10" value="5">
+      </label>
+    </div>
+    <div class="note" style="margin-top:8px">Changing memory size or access time reloads the program. A slower memory makes every FETCH and every LOAD/STORE/ADD/SUB cost more clock cycles; the program's answer stays the same.</div>
+  </section>
+
+  <div class="grid2">
+    <section class="panel">
+      <h2>Program (assembly)</h2>
+      <textarea id="src" rows="14" spellcheck="false"></textarea>
+      <div class="btnrow" style="margin-top:8px">
+        <button class="primary" id="btnLoad">Assemble &amp; load</button>
+        <span class="note" style="align-self:center">Instructions: NOP HLT LDI LOAD STORE ADD SUB INC DEC JMP JZ JNZ OUT &middot; data: <span class="mono">DB value</span> &middot; labels end with <span class="mono">:</span></span>
+      </div>
+      <div class="err" id="asmErr"></div>
+    </section>
+
+    <section class="panel">
+      <h2>Block diagram <span class="note" id="diagNote"></span></h2>
+      <div id="diagram"></div>
+    </section>
+  </div>
+
+  <section class="panel">
+    <h2>Execution</h2>
+    <div class="btnrow">
+      <button id="btnMicro" class="primary">Step micro-operation</button>
+      <button id="btnInstr">Step instruction</button>
+      <button id="btnRun">Run</button>
+      <button id="btnReset">Restart program</button>
+    </div>
+    <div style="display:flex;gap:10px;margin:14px 0 6px;flex-wrap:wrap" id="phases">
+      <span class="pill info" data-p="FETCH">FETCH</span>
+      <span class="pill info" data-p="DECODE">DECODE</span>
+      <span class="pill info" data-p="EXECUTE">EXECUTE</span>
+      <span class="pill warn" id="haltPill" style="display:none">HALTED</span>
+    </div>
+    <div id="explain" style="min-height:44px;font-size:14.5px"></div>
+  </section>
+
+  <div class="grid3">
+    <section class="panel">
+      <h2>Registers &amp; flags</h2>
+      <table id="regs"></table>
+      <h3>Output port</h3>
+      <div class="mono" id="outPort">(nothing sent yet)</div>
+      <h3>Counters</h3>
+      <div class="stats">
+        <div class="stat"><div class="v" id="stCycles">0</div><div class="l">clock cycles</div></div>
+        <div class="stat"><div class="v" id="stInstr">0</div><div class="l">instructions done</div></div>
+        <div class="stat"><div class="v" id="stCpi">-</div><div class="l">cycles / instruction</div></div>
+      </div>
+    </section>
+    <section class="panel">
+      <h2>Memory</h2>
+      <div style="max-height:360px;overflow:auto" id="memWrap"><table id="memTable"></table></div>
+    </section>
+    <section class="panel">
+      <h2>Micro-operation log</h2>
+      <div class="log" id="log" style="max-height:360px"></div>
+    </section>
+  </div>
+</main>
+<footer>Department of Integrated B.Tech &middot; Computer Organization and Architecture &middot; CO5 micro project. Everything runs in your browser, nothing is uploaded.</footer>
+<script src="cpu.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
